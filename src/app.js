@@ -1,31 +1,42 @@
 const express=require("express")
 
 const app=express()
+const {adminAuth,userAuth}=require("./middlewares/auth")
 
 
+// app.get("/ab?c", (req, res) => {
+//     res.send("hello")
+//   })
 
-app.use("/hello",(req,res)=>{
-    res.send("Hello from hello")
-})
+//   app.get("/a(bc)?d", (req, res) => {
+//     res.send("hello")
+//   })
+// //   bc is optional
+// app.get("/a(bc)+d", (req, res) => {
+//     res.send("hello")
+//   })
 
-// app.use("/test",(req,res)=>{
-//     res.send("Hello from server")
+//   app.get(/.*fly$/, (req, res) => {
+//     res.send("hello" )
+//   })
+
+// app.get("/user",(req,res)=>{
+//     console.log(req.query)
+//     res.send("hello")
 // })
-//only handlles get call
-app.get("/user",(req,res)=>{
-    res.send({firstName:"badri"})
+// //   we can write any number of times bc in between a and d
+app.use("/admin",adminAuth)
+app.get("/user",userAuth,(req,res)=>{
+  res.send("user data send")
 })
+app.get("/admin/getAllData",(req,res)=>{
+  res.send("admin data send")
+  })
 
-app.post("/user",(req,res)=>{
-    console.log("Data saved to db")
-    res.send("Data saved to db")
+app.get("/admin/deleteAllData",(req,res)=>{
+  res.send("admin data deleted")
+  })
 
-})
-
-app.delete("/user",(req,res)=>{
-    console.log("Data deleted from db")
-    res.send("Data deleted from db")
-})
 app.listen(7777,()=>{
     console.log("server is successfully to port 7777")
 })
