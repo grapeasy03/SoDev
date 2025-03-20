@@ -40,3 +40,9 @@ app.get("/admin/deleteAllData",(req,res)=>{
 app.listen(7777,()=>{
     console.log("server is successfully to port 7777")
 })
+
+app.use("/",(err,req,res,next)=>{
+  if(err){
+    res.status(500).send("something went wrong");
+  }
+})
