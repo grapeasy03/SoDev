@@ -10,19 +10,19 @@ const User=require("./nodejs/user")
 //     res.status(500).send("something went wrong");
 //   }
 // })
+app.use(express.json());
 
 app.post("/signup",async(req,res)=>{
-  const userObj={
-    firstName:"Kushagra",
-    lastName:"batra",
-    emailId:"kushagradiwan@gmail.com",
-    password:"kushagra@123",
-  }
+  console.log(req.body)
+  const user=new User(req.body);
   // creating a new instance os User model 
-  const user=new User(userObj);
+ try{
   await user.save();
   res.json({message:"user added successfully",user:user});
-
+ }
+ catch(err){
+  res.status(400).send("Error saving the user"+err.message)
+ }
 })
 connectDb()
   .then(()=>{
