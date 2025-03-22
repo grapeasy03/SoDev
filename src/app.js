@@ -24,6 +24,19 @@ app.post("/signup",async(req,res)=>{
   res.status(400).send("Error saving the user"+err.message)
  }
 })
+app.get("/user",async(req,res)=>{
+  const email=req.body.emailId;
+  try{
+   const user= await User.find({emailId:req.body.emailId});
+   res.send(user);
+  }
+  catch(err){
+    res.status(400).send("something went wrong"+err.message)
+  }
+
+  
+
+})
 connectDb()
   .then(()=>{
     console.log("connected to database")
