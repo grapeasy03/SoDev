@@ -24,6 +24,7 @@ app.post("/signup",async(req,res)=>{
   res.status(400).send("Error saving the user"+err.message)
  }
 })
+
 app.get("/user",async(req,res)=>{
   const email=req.body.emailId;
   try{
@@ -33,10 +34,31 @@ app.get("/user",async(req,res)=>{
   catch(err){
     res.status(400).send("something went wrong"+err.message)
   }
-
-  
-
 })
+
+app.delete("/user",async(req,res)=>{
+  const userId=req.body.userId;
+  try{
+    const user=await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully")
+
+  }catch(err){
+    res.status(400).send("something went wrong"+err.message)
+  }
+})
+
+app.patch("/user",async(req,res)=>{
+  const uId=req.body.userId;
+  const data=req.body;
+  try{
+    await User.findByIdAndUpdate(uId,data);
+    res.send("User updated successfully")
+    
+
+  }catch(err){
+    res.status(400).send("something went wrong"+err.message)
+  }
+  })
 connectDb()
   .then(()=>{
     console.log("connected to database")
