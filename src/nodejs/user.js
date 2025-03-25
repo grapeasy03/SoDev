@@ -3,23 +3,39 @@ const mongoose=require("mongoose");
 const userSchema=mongoose.Schema({
     firstName:{
         type:String,
+        required:true
     },
     lastName:{
         type:String
     },
     emailId:{
-        type:String
+        type:String,
+        unique:true,
+        required:true,
+        lowercase:true
+        
     },
     password:{
-        type:String
+        type:String,
+        required:true,
     },
     age:{
         type:Number
     },
     gender:{
         type:String
+    },
+    photoUrl:{
+        type:String,
+        default:"https://www.flaticon.com/free-icon/profile_3135715"
+    },
+    about:{
+        type:String,
+        default:"This is a defaulty info about the user"
+    },
+    skills:{
+        type:[String]
     }
-
 });
 
 const userModel=mongoose.model("User",userSchema);
