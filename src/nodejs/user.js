@@ -22,8 +22,10 @@ const userSchema=mongoose.Schema({
     age:{
         type:Number
     },
-    gender:{
-        type:String
+    gender: { 
+        type: String, 
+        enum: ["male", "female", "others"], 
+        message: "Gender Data is not valid"
     },
     photoUrl:{
         type:String,
@@ -36,7 +38,7 @@ const userSchema=mongoose.Schema({
     skills:{
         type:[String]
     }
-});
+},{timestamps:true});
 
 const userModel=mongoose.model("User",userSchema);
 module.exports=userModel;

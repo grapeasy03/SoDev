@@ -51,14 +51,16 @@ app.patch("/user",async(req,res)=>{
   const uId=req.body.userId;
   const data=req.body;
   try{
-    await User.findByIdAndUpdate(uId,data);
+    const user=await User.findByIdAndUpdate(uId,data,{
+      returnDocument:"after",
+      runValidators:true
+    });
+    console.log(user);
     res.send("User updated successfully")
-    
-
   }catch(err){
-    res.status(400).send("something went wrong"+err.message)
+    res.status(400).send("update failed"+err.message)
   }
-  })
+  });
 connectDb()
   .then(()=>{
     console.log("connected to database")
