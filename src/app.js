@@ -1,10 +1,10 @@
 const express=require("express")
-
 const app=express()
-
 const connectDb=require("./config/database")
 const User=require("./nodejs/user")
-
+const {validateSignUpData}=require("./utils/validation")
+const bcrypt=require("bcrypt")
+const validate=require("validator")
 // app.use("/",(err,req,res,next)=>{
 //   if(err){
 //     res.status(500).send("something went wrong");
@@ -12,17 +12,56 @@ const User=require("./nodejs/user")
 // })
 app.use(express.json());
 
+
+// signup API
 app.post("/signup",async(req,res)=>{
-  console.log(req.body)
-  const user=new User(req.body);
   // creating a new instance os User model 
  try{
+  console.log(req.body)
+  validateSignUpData(req)
+  const {firstName,lastName,emailId,password}=req.body;
+  // encrypting user passwords
+  const passHash=await bcrypt.hash(req.body.password,10);
+  console.log(passHash);
+
+
+  const user=new User({
+    firstName,lastName,emailId,password:passHash
+  });
   await user.save();
   res.json({message:"user added successfully",user:user});
  }
  catch(err){
-  res.status(400).send("Error saving the user"+err.message)
+  res.status(400).send("ERROR:"+err.message)
  }
+})
+
+// Login API
+app.post("/login",async(req,res)=>{
+  try{
+    const {emailId,password}=req.body;
+    if(!validate.isEmail(emailId)){
+      return res.status(400).send("Please enter a valid email");
+    }
+    //check if user is present
+    const user=await User.findOne({emailId});
+    if(!user){
+      throw new Error("Email Id is not present in DB")
+    }
+    const isPassValid= await bcrypt.compare(password,user.password)
+
+    if(isPassValid){
+      res.send("Login Successful!")
+
+    }
+    else{
+      throw new Error("Password is incorrect");
+    }
+  }
+  catch(err){
+    res.status(400).send("ERROR: "+err.message);
+
+  }
 })
 
 app.get("/user",async(req,res)=>{
