@@ -36,8 +36,9 @@ app.get("/user",async(req,res)=>{
   }
 })
 
-app.delete("/user",async(req,res)=>{
+app.delete("/user/:userId",async(req,res)=>{
   const userId=req.body.userId;
+  const data=req.body;
   try{
     const user=await User.findByIdAndDelete(userId);
     res.send("User deleted successfully")
@@ -47,10 +48,25 @@ app.delete("/user",async(req,res)=>{
   }
 })
 
-app.patch("/user",async(req,res)=>{
-  const uId=req.body.userId;
+app.patch("/user/:userId",async(req,res)=>{
+  const uId=req.params?.userId;
   const data=req.body;
+
+  // selectively updating instead of allowing it to update evrything
+  
   try{
+    const ALLOWED_UPDATES=[
+      "userId",
+      "photoUrl",
+      "about",
+      "age",
+      "skills"
+    ];
+    const isUpdateAllowed=Object.keys(data).every((k)=>
+    ALLOWED_UPDATES.includes(k)
+    );
+    if(!isUpdateAllowed){
+      return res.status(400).send("update is not allowed")}
     const user=await User.findByIdAndUpdate(uId,data,{
       returnDocument:"after",
       runValidators:true
@@ -65,7 +81,7 @@ connectDb()
   .then(()=>{
     console.log("connected to database")
     app.listen(7777,()=>{
-      console.log("server is successfullt listening to port 7777")
+      console.log("server is successfully listening to port 7777")
     });
   })
     .catch((err)=>{

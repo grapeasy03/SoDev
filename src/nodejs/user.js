@@ -1,4 +1,5 @@
 const mongoose=require("mongoose");
+const validate=require("validator");
 
 const userSchema=mongoose.Schema({
     firstName:{
@@ -12,8 +13,8 @@ const userSchema=mongoose.Schema({
         type:String,
         unique:true,
         required:true,
-        lowercase:true
-        
+        lowercase:true,
+        validate:[validate.isEmail,"invalid email"]
     },
     password:{
         type:String,
@@ -29,7 +30,8 @@ const userSchema=mongoose.Schema({
     },
     photoUrl:{
         type:String,
-        default:"https://www.flaticon.com/free-icon/profile_3135715"
+        default:"https://www.flaticon.com/free-icon/profile_3135715",
+        validate:[validate.isURL,"invalid url"]
     },
     about:{
         type:String,
