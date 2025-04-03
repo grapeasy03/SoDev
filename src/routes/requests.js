@@ -21,6 +21,15 @@ requestsRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
             return res.status(400).json({message:"Invalid status"+status })
         }
 
+        // if existing connection req exiists
+        const  exConReq=await connectionRequest.findOne({
+            $or:[
+                {fromUserId,toUserId},
+                {fromUserId:toUserId,toUserId:fromUserId}
+            ]
+
+        })
+
         const connReq=new connectionRequest({
             fromUserId,
             toUserId,
