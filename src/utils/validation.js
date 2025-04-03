@@ -1,6 +1,9 @@
 const validator = require("validator");
+const User=require("../models/user")
+
 
 const validateSignUpData=(req)=>{
+    try{
     const{firstName,lastName,emailId,password}=req.body;
     if(!firstName||!lastName||!emailId||!password){
         throw new Error("Please fill all the fields");
@@ -15,7 +18,31 @@ const validateSignUpData=(req)=>{
         throw new Error("Please enter a strong password")
 
     }
-};
+}
+catch(err){
+    return { isValid: false, message: "An error occurred: " + err.message };
+}};
+
+const validateprofileEditData=async (req)=>{
+    const uId=req.params?.userId;
+    const data=req.body;
+    const ALLOWED_UPDATES=[
+            "firstName",
+            "lastName",
+            "emailId",
+            "photoUrl",
+            "about",
+            "age",
+            "skills"
+            ];
+    const isUpdateAllowed=Object.keys(data).every((k)=>
+          ALLOWED_UPDATES.includes(k)
+          );
+    return isUpdateAllowed;
+          
+}
+
 module.exports={
-    validateSignUpData:validateSignUpData
+    validateSignUpData:validateSignUpData,
+    validateprofileEditData:validateprofileEditData
 }

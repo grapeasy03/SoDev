@@ -1,29 +1,33 @@
- const adminAuth=
-(req,res,next)=>{
-    console.log("admin auth is getting checked");
-    const token="xyz";
-    const isAdminauthorized=token==="xyz";
-    if(!isAdminauthorized){
-        res.status(401).json({message:"unauthorized"})
-    }
-    else{
+ const jwt=require('jsonwebtoken');
+ const User=require("../models/user");
+ 
+ const userAuth=async(req,res,next)=>{
+    //READ THE TOKEN FROM REQ COOKIES
+    try{
+        const {token} = req.cookies;
+        if(!token){
+            throw new Error("Token not found");
+        }
+        const decodedObj=await jwt.verify(token,"secret");
+        const {_id}=decodedObj;
+        const user=await User.findById(_id);
+        if(!user){
+            throw new Error("User not found");
+        }
+        req.user=user;
         next();
+        
     }
-}
-const userAuth=
-(req,res,next)=>{
-    console.log("user auth is getting checked");
-    const token="xywz";
-    const isAdminauthorized=token==="xyz";
-    if(!isAdminauthorized){
-        res.status(401).json({message:"unauthorized"})
+    catch(err){
+        res.status(400).send("Error: " + err.message);
+
     }
-    else{
-        next();
-    }
+   
+
+
 }
 module.exports={
-    adminAuth:adminAuth,
+   
     userAuth:userAuth
 
 }
